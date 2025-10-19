@@ -59,12 +59,6 @@
                 <artifactId>lombok</artifactId>
                 <version>1.18.40</version>
             </dependency>
-
-            <dependency>
-                <groupId>com.jovia.middleware</groupId>
-                <artifactId>dynamic-thread-pool-spring-boot-starter</artifactId>
-                <version>1.0</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

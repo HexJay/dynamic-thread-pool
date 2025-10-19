@@ -38,4 +38,24 @@ public class ThreadPoolConfig {
                 handler
         );
     }
+
+    @Bean
+    public ThreadPoolExecutor threadPoolExecutor1(ThreadPoolConfigProperties threadPoolConfigProperties) {
+        RejectedExecutionHandler handler = switch (threadPoolConfigProperties.getPolicy()) {
+            case "AbortPolicy" -> new ThreadPoolExecutor.AbortPolicy();
+            case "DiscardPolicy" -> new ThreadPoolExecutor.DiscardPolicy();
+            case "DiscardOldestPolicy" -> new ThreadPoolExecutor.DiscardOldestPolicy();
+            default -> new ThreadPoolExecutor.CallerRunsPolicy();
+        };
+
+        return new ThreadPoolExecutor(
+                threadPoolConfigProperties.getCorePoolSize(),
+                threadPoolConfigProperties.getMaxPoolSize(),
+                threadPoolConfigProperties.getKeepAliveTime(),
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>(threadPoolConfigProperties.getBlockQueueSize()),
+                Executors.defaultThreadFactory(),
+                handler
+        );
+    }
 }
