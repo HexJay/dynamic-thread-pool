@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.jovia</groupId>
+    <groupId>com.jovia.middleware</groupId>
     <artifactId>dynamic-thread-pool</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -17,6 +17,7 @@
     </parent>
     <modules>
         <module>dynamic-thread-pool-spring-boot-starter</module>
+        <module>dynamic-thread-pool-test</module>
     </modules>
 
     <properties>
@@ -52,6 +53,17 @@
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>1.18.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.40</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jovia.middleware</groupId>
+                <artifactId>dynamic-thread-pool-spring-boot-starter</artifactId>
+                <version>1.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
