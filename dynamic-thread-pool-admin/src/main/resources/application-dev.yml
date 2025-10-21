@@ -1,10 +1,26 @@
 server:
   port: 8092
   
-  
 spring:
   data:
     redis:
       host: 172.31.74.95
       port: 16379
       database: 0
+  
+# 线程池配置
+thread:
+  pool:
+    executor:
+      core-pool-size: 20
+      max-pool-size: 50
+      keep-alive-time: 5000
+      block-queue-size: 5000
+      policy: CallerRunsPolicy
+      
+dynamic:
+  thread:
+    pool:
+      enabled: false
+      host: 172.31.74.95
+      port: 16379

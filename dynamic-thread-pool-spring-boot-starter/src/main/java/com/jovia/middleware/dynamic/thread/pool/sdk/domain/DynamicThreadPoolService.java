@@ -2,10 +2,14 @@ package com.jovia.middleware.dynamic.thread.pool.sdk.domain;
 
 import com.alibaba.fastjson.JSON;
 import com.jovia.middleware.dynamic.thread.pool.sdk.domain.model.ThreadPoolConfigEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -65,13 +69,25 @@ public class DynamicThreadPoolService implements IDynamicThreadPoolService {
     }
 
     @Override
-    public void updateThreadPoolConfig(ThreadPoolConfigEntity threadPoolConfigEntity) {
-        if (threadPoolConfigEntity == null || !Objects.equals(threadPoolConfigEntity.getAppName(), appName)) return;
-        ThreadPoolExecutor threadPoolExecutor = threadPoolMap.get(threadPoolConfigEntity.getThreadPoolName());
-        if (threadPoolExecutor == null) return;
+    public void updateThreadPoolConfig(ThreadPoolConfigEntity config) {
+        if (config == null || !Objects.equals(config.getAppName(), appName)) return;
+
+        ThreadPoolExecutor executor = threadPoolMap.get(config.getThreadPoolName());
+        if (executor == null) {
+            logger.warn("[动态线程池] 未找到线程池: {}", config.getThreadPoolName());
+            return;
+        }
+        
+        int coreSize = config.getCorePoolSize();
+        int maxSize = config.getMaximumPoolSize();
+
+        if (coreSize <= 0 || maxSize <= 0 || coreSize > maxSize) {
+            logger.warn("[动态线程池] 配置不合法: corePoolSize={}, maxPoolSize={}, 跳过更新", coreSize, maxSize);
+            return;
+        }
         
         // 设置核心线程数和最大线程数,先更新最大线程数
-        threadPoolExecutor.setMaximumPoolSize(threadPoolConfigEntity.getMaximumPoolSize());
-        threadPoolExecutor.setCorePoolSize(threadPoolConfigEntity.getCorePoolSize());
+        executor.setMaximumPoolSize(config.getMaximumPoolSize());
+        executor.setCorePoolSize(config.getCorePoolSize());
     }
 }

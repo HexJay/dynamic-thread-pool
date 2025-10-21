@@ -1,6 +1,7 @@
-package com.jovia.middleware.dynamic.thread.pool.domain.entity;
+package com.jovia.middleware.dynamic.thread.pool.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -11,6 +12,13 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(of = {
+        "appName",
+        "threadPoolName",
+        "corePoolSize",
+        "maximumPoolSize",
+        "queueType"
+})
 public class ThreadPoolConfigEntity {
     
     public ThreadPoolConfigEntity(String appName, String threadPoolName) {

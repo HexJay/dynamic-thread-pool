@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 线程池数据上报任务
@@ -25,16 +28,22 @@ public class ThreadPoolDataReportJob {
         this.registry = registry;
         this.dynamicThreadPoolService = dynamicThreadPoolService;
     }
+
+    // 保存上一次上报的配置，用于检测变化
+    private final Map<String, ThreadPoolConfigEntity> lastReported = new ConcurrentHashMap<>();
     
     @Scheduled(cron = "*/5 * * * * ?")
     public void report() {
-        List<ThreadPoolConfigEntity> threadPoolConfigEntities = dynamicThreadPoolService.queryAllThreadPools();
-        registry.reportThreadPool(threadPoolConfigEntities);
-        logger.info("动态线程池，上报线程池信息:{}", JSON.toJSONString(threadPoolConfigEntities));
-        
-        for (ThreadPoolConfigEntity threadPoolConfigEntity : threadPoolConfigEntities) {
-            registry.reportThreadPoolConfigParameter(threadPoolConfigEntity);
-            logger.info("动态线程池，上报线程池配置参数:{}", JSON.toJSONString(threadPoolConfigEntity));
+
+        List<ThreadPoolConfigEntity> currentList  = dynamicThreadPoolService.queryAllThreadPools();
+
+        for (ThreadPoolConfigEntity current : currentList) {
+            ThreadPoolConfigEntity last = lastReported.get(current.getThreadPoolName());
+            if (last == null || !Objects.equals(current, last)) {
+                registry.reportThreadPoolConfig(current);
+                lastReported.put(current.getThreadPoolName(), current);
+                logger.info("检测到线程池配置变更，上报: {}", JSON.toJSONString(current));
+            }
         }
     }
 }

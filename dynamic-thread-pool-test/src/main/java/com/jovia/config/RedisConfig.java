@@ -1,4 +1,4 @@
-package com.jovia.middleware.dynamic.thread.pool.config;
+package com.jovia.config;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;

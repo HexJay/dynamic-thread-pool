@@ -19,9 +19,9 @@ import lombok.NoArgsConstructor;
         "maximumPoolSize",
         "queueType"
 })
-public class ThreadPoolConfigEntity {
+public class ThreadPoolStatusEntity {
     
-    public ThreadPoolConfigEntity(String appName, String threadPoolName) {
+    public ThreadPoolStatusEntity(String appName, String threadPoolName) {
         this.appName = appName;
         this.threadPoolName = threadPoolName;
     }

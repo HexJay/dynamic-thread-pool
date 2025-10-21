@@ -10,7 +10,14 @@ import java.util.List;
  * @date 2025-10-19-16:12
  */
 public interface IRegistry {
-    void reportThreadPool(List<ThreadPoolConfigEntity> threadPoolEntities);
+    
+    /**
+     * 上报当前应用的全部线程池参数
+     */
+    void reportAllThreadPools(List<ThreadPoolConfigEntity> threadPoolEntities);
 
-    void reportThreadPoolConfigParameter(ThreadPoolConfigEntity threadPoolConfigEntity);
+    /** 
+     * 上报单个线程池参数
+     */
+    void reportThreadPoolConfig(ThreadPoolConfigEntity threadPoolConfigEntity);
 }

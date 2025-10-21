@@ -14,7 +14,7 @@ import java.util.List;
  * @author Jay
  * @date 2025-10-19-20:51
  */
-public class ThreadPoolConfigAdjustListener implements MessageListener<ThreadPoolConfigEntity> {
+public class ThreadPoolConfigAdjustListener implements MessageListener<String> {
 
     private final Logger logger = LoggerFactory.getLogger(ThreadPoolConfigAdjustListener.class);
 
@@ -27,17 +27,10 @@ public class ThreadPoolConfigAdjustListener implements MessageListener<ThreadPoo
     }
 
     @Override
-    public void onMessage(CharSequence channel, ThreadPoolConfigEntity msg) {
-        logger.info("动态线程池 {} 配置更新, corePoolSize:{}, maximumPoolSize:{}", msg.getThreadPoolName(), msg.getCorePoolSize(), msg.getMaximumPoolSize());
-        dynamicThreadPoolService.updateThreadPoolConfig(msg);
-        
-        // 上报数据
-        List<ThreadPoolConfigEntity> threadPoolConfigEntities = dynamicThreadPoolService.queryAllThreadPools();
-        registry.reportThreadPool(threadPoolConfigEntities);
-        
-        ThreadPoolConfigEntity threadPoolConfigEntity = dynamicThreadPoolService.queryThreadPoolByName(msg.getThreadPoolName());
-        registry.reportThreadPoolConfigParameter(threadPoolConfigEntity);
-        
-        logger.info("动态线程池，上报线程池配置: {}", JSON.toJSONString(threadPoolConfigEntity));
+    public void onMessage(CharSequence channel, String msg) {
+        ThreadPoolConfigEntity config = JSON.parseObject(msg, ThreadPoolConfigEntity.class);
+
+        logger.info("动态线程池 {} 配置更新, corePoolSize:{}, maximumPoolSize:{}", config.getThreadPoolName(), config.getCorePoolSize(), config.getMaximumPoolSize());
+        dynamicThreadPoolService.updateThreadPoolConfig(config);
     }
 }

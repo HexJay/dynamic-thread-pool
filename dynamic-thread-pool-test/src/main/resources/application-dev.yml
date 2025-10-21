@@ -17,3 +17,10 @@ dynamic:
       enabled: true
       host: 172.31.74.95
       port: 16379
+      
+spring:
+  data:
+    redis:
+      host: 172.31.74.95
+      port: 16379
+      database: 0
