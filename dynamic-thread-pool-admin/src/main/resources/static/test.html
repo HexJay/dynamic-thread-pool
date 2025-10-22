@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源加载测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .loading { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>动态线程池监控平台 - 资源加载测试</h1>
+    
+    <div class="test-item">
+        <h3>Vue 3 加载状态</h3>
+        <p id="vue-status" class="loading">检测中...</p>
+    </div>
+    
+    <div class="test-item">
+        <h3>Element Plus 加载状态</h3>
+        <p id="element-status" class="loading">检测中...</p>
+    </div>
+    
+    <div class="test-item">
+        <h3>Axios 加载状态</h3>
+        <p id="axios-status" class="loading">检测中...</p>
+    </div>
+    
+    <div class="test-item">
+        <h3>API 连接测试</h3>
+        <p id="api-status" class="loading">检测中...</p>
+        <button onclick="testAPI()">重新测试 API</button>
+    </div>
+
+    <div class="test-item">
+        <h3>解决方案</h3>
+        <div id="solutions"></div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/element-plus"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <script>
+        const problems = [];
+        
+        // 检测 Vue
+        setTimeout(() => {
+            const vueStatus = document.getElementById('vue-status');
+            if (typeof Vue !== 'undefined') {
+                vueStatus.textContent = '✓ Vue 3 加载成功 (版本: ' + Vue.version + ')';
+                vueStatus.className = 'success';
+            } else {
+                vueStatus.textContent = '✗ Vue 3 加载失败';
+                vueStatus.className = 'error';
+                problems.push('Vue 3 CDN 资源加载失败');
+            }
+        }, 1000);
+        
+        // 检测 Element Plus
+        setTimeout(() => {
+            const elementStatus = document.getElementById('element-status');
+            if (typeof ElementPlus !== 'undefined') {
+                elementStatus.textContent = '✓ Element Plus 加载成功';
+                elementStatus.className = 'success';
+            } else {
+                elementStatus.textContent = '✗ Element Plus 加载失败';
+                elementStatus.className = 'error';
+                problems.push('Element Plus CDN 资源加载失败');
+            }
+        }, 1000);
+        
+        // 检测 Axios
+        setTimeout(() => {
+            const axiosStatus = document.getElementById('axios-status');
+            if (typeof axios !== 'undefined') {
+                axiosStatus.textContent = '✓ Axios 加载成功';
+                axiosStatus.className = 'success';
+            } else {
+                axiosStatus.textContent = '✗ Axios 加载失败';
+                axiosStatus.className = 'error';
+                problems.push('Axios CDN 资源加载失败');
+            }
+        }, 1000);
+        
+        // 测试 API
+        function testAPI() {
+            const apiStatus = document.getElementById('api-status');
+            apiStatus.textContent = '测试中...';
+            apiStatus.className = 'loading';
+            
+            if (typeof axios !== 'undefined') {
+                axios.get('/api/dynamic_thread_pool/query_thread_pool_list')
+                    .then(response => {
+                        apiStatus.textContent = '✓ API 连接成功 (返回: ' + JSON.stringify(response.data).substring(0, 100) + '...)';
+                        apiStatus.className = 'success';
+                    })
+                    .catch(error => {
+                        apiStatus.textContent = '✗ API 连接失败: ' + error.message;
+                        apiStatus.className = 'error';
+                        problems.push('API 连接失败: ' + error.message);
+                    });
+            } else {
+                apiStatus.textContent = '✗ Axios 未加载，无法测试 API';
+                apiStatus.className = 'error';
+            }
+        }
+        
+        // 显示解决方案
+        setTimeout(() => {
+            const solutions = document.getElementById('solutions');
+            if (problems.length === 0) {
+                solutions.innerHTML = '<p class="success">所有资源加载正常！如果主页面仍然显示蓝屏，请按 F12 打开浏览器控制台查看详细错误信息。</p>';
+            } else {
+                let html = '<p class="error">检测到以下问题：</p><ul>';
+                problems.forEach(p => {
+                    html += '<li>' + p + '</li>';
+                });
+                html += '</ul>';
+                html += '<h4>解决方案：</h4>';
+                html += '<ol>';
+                html += '<li><strong>检查网络连接</strong>：确保可以访问 unpkg.com</li>';
+                html += '<li><strong>使用国内CDN</strong>：可以替换为国内的CDN源（如下方修复版本）</li>';
+                html += '<li><strong>使用本地资源</strong>：下载JS文件到本地</li>';
+                html += '<li><strong>检查防火墙/代理</strong>：可能阻止了CDN资源加载</li>';
+                html += '</ol>';
+                solutions.innerHTML = html;
+            }
+        }, 2000);
+        
+        // 延迟测试API
+        setTimeout(testAPI, 1500);
+    </script>
+</body>
+</html>
+
